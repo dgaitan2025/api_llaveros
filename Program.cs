@@ -10,7 +10,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowVue",
         policy => policy
-            .WithOrigins("http://localhost:3000")
+            .WithOrigins(
+    "http://localhost:3000",              // tu entorno local
+    "https://llaverostec.onrender.com"   // tu frontend público en Render
+)
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
