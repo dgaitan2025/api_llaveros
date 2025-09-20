@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace ValidaNickname.Controllers;
+namespace parcial2.Controllers;
 
 [ApiController]
 [Route("[controller]")]

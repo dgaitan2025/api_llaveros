@@ -1,22 +1,46 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+using Microsoft.EntityFrameworkCore;
+using parcial2.Models;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<dbparcialContext>(options =>
+    options.UseMySql(builder.Configuration.GetConnectionString("ParcialDb"),
+        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("ParcialDb"))));
+
 
 // Add services to the container.
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//Cors ANY
 
-// 👉 CORS debe ir ANTES del Build()
+
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowVue",
-        policy => policy
-            .WithOrigins(
-                "http://localhost:3000",              // tu entorno local
-                "https://llaverostec.onrender.com"   // tu frontend público en Render
-            )
-            .AllowAnyHeader()
-            .AllowAnyMethod());
+    options.AddPolicy("ANY",
+        policy =>
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
 });
+
+// CORS restringido 
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("private",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000") // solo React local
+                  .WithHeaders("Content-Type", "Authorization") // solo estos headers
+                  .WithMethods("GET", "POST"); // solo GET y POST
+        });
+});
+
+
+builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -26,16 +50,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseHttpsRedirection();
-
-
-app.UseCors("AllowVue");
+app.UseCors("ANY");
 
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.MapGet("/health", () => Results.Ok("API is running ✅"));
 
 app.Run();
