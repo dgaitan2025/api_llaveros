@@ -19,4 +19,4 @@ COPY --from=build /app/out .
 EXPOSE 8080
 ENV ASPNETCORE_URLS=http://+:8080
 
-ENTRYPOINT ["dotnet", "ValidaNickname.dll"]
+ENTRYPOINT ["dotnet", "parcial2.dll"]
