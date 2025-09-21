@@ -24,8 +24,8 @@ namespace parcial2.Controllers
             {
                 // Ejecutar SP de inserción
                 await _context.Database.ExecuteSqlRawAsync(
-                    "CALL sp_crud_vehiculos(null, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8})",
-                    
+                    "CALL sp_crud_vehiculos({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8})",
+                    null,
                     dto.idcolor,
                     dto.idmarca,
                     dto.modelo,
