@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MySql.Data.MySqlClient;
 using parcial2.Models;
 
 namespace parcial2.Controllers
@@ -17,46 +18,46 @@ namespace parcial2.Controllers
         }
 
         [HttpPost("CrearVehiculo")]
-public async Task<ActionResult <vehiculoInsert>> InsertarVehiculo(vehiculoInsert dto)
-    
-{
-    try
-    {
-        await using var conn = _context.Database.GetDbConnection();
-        await conn.OpenAsync();
-
-        // Paso 1: Ejecutar el SP
-        await using (var cmd = conn.CreateCommand())
+        public async Task<ActionResult <vehiculoInsert>> InsertarVehiculo(vehiculoInsert dto)
+            
         {
-            cmd.CommandText = "CALL sp_crud_vehiculos(@idvehiculo, @idcolor, @idmarca, @modelo, @chasis, @motor, @nombre, @activo, @opcion)";
-            cmd.Parameters.Add(new MySqlParameter("@idvehiculo", DBNull.Value));
-            cmd.Parameters.Add(new MySqlParameter("@idcolor", dto.idcolor));
-            cmd.Parameters.Add(new MySqlParameter("@idmarca", dto.idmarca));
-            cmd.Parameters.Add(new MySqlParameter("@modelo", dto.modelo));
-            cmd.Parameters.Add(new MySqlParameter("@chasis", dto.chasis ?? string.Empty));
-            cmd.Parameters.Add(new MySqlParameter("@motor", dto.motor ?? string.Empty));
-            cmd.Parameters.Add(new MySqlParameter("@nombre", dto.nombre ?? string.Empty));
-            cmd.Parameters.Add(new MySqlParameter("@activo", dto.activo));
-            cmd.Parameters.Add(new MySqlParameter("@opcion", "C"));
-            await cmd.ExecuteNonQueryAsync();
+            try
+            {
+                await using var conn = _context.Database.GetDbConnection();
+                await conn.OpenAsync();
+
+                // Paso 1: Ejecutar el SP
+                await using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "CALL sp_crud_vehiculos(@idvehiculo, @idcolor, @idmarca, @modelo, @chasis, @motor, @nombre, @activo, @opcion)";
+                    cmd.Parameters.Add(new MySqlParameter("@idvehiculo", DBNull.Value));
+                    cmd.Parameters.Add(new MySqlParameter("@idcolor", dto.idcolor));
+                    cmd.Parameters.Add(new MySqlParameter("@idmarca", dto.idmarca));
+                    cmd.Parameters.Add(new MySqlParameter("@modelo", dto.modelo));
+                    cmd.Parameters.Add(new MySqlParameter("@chasis", dto.chasis ?? string.Empty));
+                    cmd.Parameters.Add(new MySqlParameter("@motor", dto.motor ?? string.Empty));
+                    cmd.Parameters.Add(new MySqlParameter("@nombre", dto.nombre ?? string.Empty));
+                    cmd.Parameters.Add(new MySqlParameter("@activo", dto.activo));
+                    cmd.Parameters.Add(new MySqlParameter("@opcion", "C"));
+                    await cmd.ExecuteNonQueryAsync();
+                }
+
+                // Paso 2: Leer el LAST_INSERT_ID()
+                await using (var cmd2 = conn.CreateCommand())
+                {
+                    cmd2.CommandText = "SELECT LAST_INSERT_ID()";
+                    var result = await cmd2.ExecuteScalarAsync();
+                    int idInsertado = Convert.ToInt32(result);
+
+                    return Ok(new { mensaje = "Vehículo insertado correctamente", id = idInsertado });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { mensaje = "Error al insertar el vehículo", detalle = ex.Message });
+            }
         }
-
-        // Paso 2: Leer el LAST_INSERT_ID()
-        await using (var cmd2 = conn.CreateCommand())
-        {
-            cmd2.CommandText = "SELECT LAST_INSERT_ID()";
-            var result = await cmd2.ExecuteScalarAsync();
-            int idInsertado = Convert.ToInt32(result);
-
-            return Ok(new { mensaje = "Vehículo insertado correctamente", id = idInsertado });
-        }
-
-    }
-    catch (Exception ex)
-    {
-        return BadRequest(new { mensaje = "Error al insertar el vehículo", detalle = ex.Message });
-    }
-}
 
 
         [HttpPost("ActualizarVehiculo")]
