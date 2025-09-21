@@ -4,8 +4,11 @@ using parcial2.Models;
 
 namespace parcial2.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class CRUDController : Controller
     {
+        
 
         private readonly dbparcialContext _context;
         public CRUDController(dbparcialContext context)
@@ -14,31 +17,42 @@ namespace parcial2.Controllers
         }
 
         [HttpPost("CrearVehiculo")]
-        public async Task<IActionResult> InsertarVehiculo(vehiculoInsert dto)
+        public async Task<ActionResult <vehiculoInsert>> InsertarVehiculo(vehiculoInsert dto)
+            
         {
             try
             {
-                
+                // Ejecutar SP de inserción
                 await _context.Database.ExecuteSqlRawAsync(
-                    "CALL sp_crud_vehiculos ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7},{8})",
-                    null,
+                    "CALL sp_crud_vehiculos(null, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8})",
+                    
                     dto.idcolor,
                     dto.idmarca,
                     dto.modelo,
-                    dto.chasis,
-                    dto.motor,
-                    dto.nombre,
+                    dto.chasis ?? string.Empty,
+                    dto.motor ?? string.Empty,
+                    dto.nombre ?? string.Empty,
                     dto.activo,
-                    "C"                  
+                    "C"
                 );
 
-                return Ok(new { mensaje = "Vehículo insertado correctamente" });
+                // Obtener el último ID insertado
+                var idInsertado = await _context.Database
+                    .SqlQueryRaw<int>("SELECT LAST_INSERT_ID();")
+                    .FirstAsync();
+
+                return Ok(new
+                {
+                    mensaje = "Vehículo insertado correctamente",
+                    id = idInsertado
+                });
             }
             catch (Exception ex)
             {
                 return BadRequest(new { mensaje = "Error al insertar el vehículo", detalle = ex.Message });
             }
         }
+
 
         [HttpPost("ActualizarVehiculo")]
         public async Task<IActionResult> ActualizarVehiculo(vehiculoActualizar dto)
