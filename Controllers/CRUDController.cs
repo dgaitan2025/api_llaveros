@@ -23,26 +23,28 @@ namespace parcial2.Controllers
             try
             {
                 // Ejecutar SP de inserción
-                await _context.Database.ExecuteSqlRawAsync(
-                    "CALL sp_crud_vehiculos({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8})",
-                    null,
-                    dto.idcolor,
-                    dto.idmarca,
-                    dto.modelo,
-                    dto.chasis ?? string.Empty,
-                    dto.motor ?? string.Empty,
-                    dto.nombre ?? string.Empty,
-                    dto.activo,
-                    "C"
-                );
+                            var idInsertado = await _context.vehiculos
+							.FromSqlRaw("CALL sp_crud_vehiculos({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8})",
+								null,
+								dto.idcolor,
+								dto.idmarca,
+								dto.modelo,
+								dto.chasis ?? string.Empty,
+								dto.motor ?? string.Empty,
+								dto.nombre ?? string.Empty,
+								dto.activo,
+								"C")
+							.Select(v => v.idvehiculo) // 👈 tu propiedad PK
+							.FirstAsync();
 
-                
 
-                return Ok(new
-                {
-                    mensaje = "Vehículo insertado correctamente",
-                    
-                });
+
+            return Ok(new
+            {
+                mensaje = "Vehículo insertado correctamente",
+                id = idInsertado
+
+            });
             }
             catch (Exception ex)
             {
