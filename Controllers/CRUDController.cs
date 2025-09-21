@@ -36,15 +36,12 @@ namespace parcial2.Controllers
                     "C"
                 );
 
-                // Obtener el último ID insertado
-                var idInsertado = await _context.Database
-                    .SqlQueryRaw<int>("SELECT LAST_INSERT_ID();")
-                    .FirstAsync();
+                
 
                 return Ok(new
                 {
                     mensaje = "Vehículo insertado correctamente",
-                    id = idInsertado
+                    
                 });
             }
             catch (Exception ex)
