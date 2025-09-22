@@ -1,4 +1,4 @@
-namespace parcial2
+namespace ValidaNickname
 {
     public class WeatherForecast
     {

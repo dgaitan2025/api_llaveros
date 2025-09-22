@@ -2,8 +2,8 @@
 <!-- https://go.microsoft.com/fwlink/?LinkID=208121. -->
 <Project>
   <PropertyGroup>
-    <_PublishTargetUrl>C:\Users\dell\OneDrive\Documentos\Pagina WEB\SubierP2</_PublishTargetUrl>
-    <History>True|2025-09-20T18:41:34.1714975Z||;True|2025-09-20T12:40:27.8371765-06:00||;True|2025-09-20T12:26:22.2372776-06:00||;</History>
+    <_PublishTargetUrl>C:\Users\dell\OneDrive\Documentos\api</_PublishTargetUrl>
+    <History>True|2025-09-12T01:24:56.5777164Z||;True|2025-09-11T19:06:16.3705228-06:00||;True|2025-09-11T03:10:39.1886563-06:00||;True|2025-09-10T16:36:41.4427123-06:00||;True|2025-09-10T16:31:45.7265840-06:00||;True|2025-09-10T16:27:46.1322855-06:00||;True|2025-09-10T16:25:37.4582582-06:00||;True|2025-09-10T16:05:13.0069672-06:00||;</History>
     <LastFailureDetails />
   </PropertyGroup>
 </Project>

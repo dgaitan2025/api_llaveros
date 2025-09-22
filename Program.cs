@@ -1,46 +1,22 @@
-using Microsoft.EntityFrameworkCore;
-using parcial2.Models;
-
-var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddDbContext<dbparcialContext>(options =>
-    options.UseMySql(builder.Configuration.GetConnectionString("ParcialDb"),
-        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("ParcialDb"))));
-
+﻿var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-//Cors ANY
-
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("ANY",
-        policy =>
-        {
-            policy.AllowAnyOrigin()
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
-        });
-});
-
-// CORS restringido 
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("private",
-        policy =>
-        {
-            policy.WithOrigins("http://localhost:3000") // solo React local
-                  .WithHeaders("Content-Type", "Authorization") // solo estos headers
-                  .WithMethods("GET", "POST"); // solo GET y POST
-        });
-});
-
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// 👉 CORS debe ir ANTES del Build()
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowVue",
+        policy => policy
+            .WithOrigins(
+                "http://localhost:3000",              // tu entorno local
+                "https://llaverostec.onrender.com"   // tu frontend público en Render
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
 
 var app = builder.Build();
 
@@ -50,10 +26,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseCors("ANY");
+
+app.UseHttpsRedirection();
+
+
+app.UseCors("AllowVue");
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapGet("/health", () => Results.Ok("API is running ✅"));
 
 app.Run();
