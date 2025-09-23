@@ -12,7 +12,8 @@ builder.Services.AddCors(options =>
         policy => policy
             .WithOrigins(
                 "http://localhost:3000",              // tu entorno local
-                "https://llaverostec.onrender.com"   // tu frontend público en Render
+                "https://llaverostec.onrender.com",
+				"https://tecllaveros.onrender.com"   // tu frontend público en Render
             )
             .AllowAnyHeader()
             .AllowAnyMethod());

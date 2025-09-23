@@ -114,7 +114,7 @@ namespace ValidaNicknameApi.Controllers
                 using var connection = new MySqlConnection(_configuration.GetConnectionString("DefaultConnection"));
                 await connection.OpenAsync();
 
-                string query = @"SELECT UsuarioId, Email, Nickname, PasswordHash, Fotografia2 
+                string query = @"SELECT RolId, Email, Nickname, PasswordHash, Fotografia2 
                          FROM usuarios 
                          WHERE Email = @usuario OR Nickname = @usuario
                          LIMIT 1";
@@ -128,7 +128,7 @@ namespace ValidaNicknameApi.Controllers
                     return Unauthorized(new { success = false, message = "Usuario o contraseña incorrectos" });
                 }
 
-                var usuarioId = reader.GetInt64("UsuarioId");
+                var RolId = reader.GetInt64("RolId");
                 var email = reader.GetString("Email");
                 var nickname = reader.GetString("Nickname");
                 var hash = reader.GetString("PasswordHash");
@@ -155,7 +155,7 @@ namespace ValidaNicknameApi.Controllers
                     message = "Login exitoso",
                     usuario = new
                     {
-                        id = usuarioId,
+                        id = RolId,
                         email,
                         nickname,
                         photo = fotoBase64 != null ? $"data:image/png;base64,{fotoBase64}" : null
